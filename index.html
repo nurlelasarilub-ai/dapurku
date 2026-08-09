@@ -182,6 +182,16 @@
   .convo-item .pv{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .convo-item .tm{font-size:10.5px;color:var(--muted);flex-shrink:0}
   .unread-dot{width:9px;height:9px;background:var(--coral);border-radius:50%;position:absolute;right:12px;top:12px}
+  /* Notifikasi */
+  .notif-item .nm{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .notif-meal-tag{display:inline-block;font-size:10.5px;font-weight:800;color:var(--coral-dark);
+    background:var(--peach-soft);padding:2px 8px;border-radius:999px;max-width:100%;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .notif-actions{margin-top:5px;display:flex;gap:6px}
+  .notif-reply{font-size:11px;font-weight:800;color:var(--coral-dark);background:var(--peach-soft);
+    padding:4px 10px;border-radius:999px;border:none;cursor:pointer}
+  .notif-reply:active{background:var(--peach)}
+  .notif-item.read{opacity:.7}
 
   .chat-head{position:sticky;top:0;z-index:20;background:rgba(255,243,234,.92);backdrop-filter:blur(8px);
     display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--peach-soft)}
@@ -268,7 +278,8 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 let state = {
   user:null, profile:null, view:'feed', activeDay: DAY_ID[new Date().getDay()===0?6:new Date().getDay()-1],
   chatWith:null, profilesCache:{}, unreadCount:0, unreadNotif:0, profilesList:[],
-  feedFilter:'today'  // 'today' | 'all' | monday..sunday
+  feedFilter:'today',  // 'today' | 'all' | monday..sunday
+  openCommentsFor:null // id meal_plan yg komentarnya dibuka otomatis
 };
 
 /* ----------------- Utilities ----------------- */
@@ -529,6 +540,14 @@ async function postCard(mp){
   const comBox=el('div',{className:'comments hidden'});
   card.append(comBox);
   card.dataset.commentsLoaded='0';
+  // Auto-buka komentar bila datang dari notifikasi
+  if(state.openCommentsFor && state.openCommentsFor===mp.id){
+    setTimeout(()=>{
+      toggleComments(mp.id,comBox);
+      card.scrollIntoView({behavior:'smooth',block:'center'});
+      state.openCommentsFor=null;
+    },300);
+  }
   return card;
 }
 
@@ -847,29 +866,41 @@ async function renderNotifications(host){
   ));
   const list=el('div',{id:'notifList'}); page.append(list);
   list.append(el('div',{className:'empty'},'Memuat...'));
-  const {data}=await sb.from('notifications').select('*, actor:profiles!notifications_actor_id_fkey(id,username,full_name,avatar_url)')
-    .eq('user_id',state.user.id).order('created_at',{ascending:false}).limit(50);
+  const {data}=await sb.from('notifications').select(
+    '*, actor:profiles!notifications_actor_id_fkey(id,username,full_name,avatar_url), meal:meal_plans(id,title,day,meal_time)'
+  ).eq('user_id',state.user.id).order('created_at',{ascending:false}).limit(50);
   list.innerHTML='';
   if(!data||data.length===0){ list.append(el('div',{className:'empty'},el('div',{className:'eicon'},'🔕'),'Belum ada notifikasi. Mulai dengan menyukai atau berkomentar!')); return; }
   for(const n of data){
     const a=n.actor;
     const name = a?.full_name || a?.username || 'Seseorang';
-    // Teks yang natural: siapa + aksi
+    const meal = n.meal;
+    // Teks yang natural: siapa + aksi + judul menu
     let detail;
-    if(n.type==='like') detail = NOTIF_ICON.like+' '+name+' menyukai rencana masakanmu ❤️';
-    else if(n.type==='comment') detail = NOTIF_ICON.comment+' '+name+' '+(n.content||'berkomentar');
-    else if(n.type==='message') detail = NOTIF_ICON.message+' '+name+' mengirim pesan: '+(n.content||'');
-    else detail = NOTIF_ICON[n.type]+' '+name+' '+(n.content||NOTIF_LABEL[n.type]);
-    const item=el('button',{className:'convo-item',style:'text-align:left;width:100%;opacity:'+(n.is_read?'.65':'1'),
+    if(n.type==='like') detail = name+' menyukai menu'+(meal?' "'+meal.title+'"':'')+' ❤️';
+    else if(n.type==='comment') detail = name+' berkomentar di "'+(meal?title:'')+'": '+((n.content||'').replace(/^berkomentar:\s*/i,''));
+    else if(n.type==='message') detail = name+': '+(n.content||'mengirim pesan');
+    else detail = name+' '+(n.content||NOTIF_LABEL[n.type]);
+
+    const isMsg = n.type==='message';
+    const item=el('div',{className:'convo-item notif-item'+(n.is_read?' read':''),
       onClick:()=>openNotif(n)},
       avatarFor(a||{username:'?'}),
       el('div',{className:'info'},
-        el('div',{className:'nm'}, NOTIF_ICON[n.type]+' '+(
-          n.type==='like'?'Suka':
-          n.type==='comment'?'Komentar baru':
-          n.type==='message'?'Pesan baru':'Notifikasi'
-        )),
-        el('div',{className:'pv'}, detail)
+        el('div',{className:'nm'},
+          NOTIF_ICON[n.type]+' '+(
+            n.type==='like'?'Suka':
+            n.type==='comment'?'Komentar baru':
+            n.type==='message'?'Pesan baru':'Notifikasi'
+          ),
+          meal && !isMsg ? el('span',{className:'notif-meal-tag'},'🍽️ '+meal.title) : null
+        ),
+        el('div',{className:'pv'}, detail),
+        el('div',{className:'notif-actions'},
+          isMsg
+            ? el('button',{className:'notif-reply',onClick:e=>{e.stopPropagation();openNotif(n)}},'💬 Balas pesan')
+            : el('button',{className:'notif-reply',onClick:e=>{e.stopPropagation();replyNotif(n)}},'💬 Balas komentar')
+        )
       ),
       el('div',{className:'tm'},timeAgo(n.created_at)),
       n.is_read?null:el('span',{className:'unread-dot'})
@@ -883,8 +914,20 @@ async function renderNotifications(host){
 async function markAllRead(){ await sb.from('notifications').update({is_read:true}).eq('user_id',state.user.id); state.unreadNotif=0; updateNotifBadge(); go('notifications'); }
 function openNotif(n){
   if(n.type==='message' && n.actor_id){ state.chatWith=n.actor_id; go('messages',{chatWith:n.actor_id}); }
-  else if(n.meal_plan_id){ go('feed'); toast('Buka feed untuk melihat interaksi 👀'); }
+  else if(n.meal_plan_id){
+    // buka feed hari menu itu lalu otomatis buka kolom komentar
+    if(n.meal?.day){ state.feedFilter=n.meal.day; }
+    state.openCommentsFor=n.meal_plan_id;
+    go('feed');
+  }
   else go('feed');
+}
+// Balas komentar: buka feed + auto-expand komentar menu terkait
+function replyNotif(n){
+  if(n.type==='message'){ openNotif(n); return; }
+  if(n.meal?.day) state.feedFilter=n.meal.day;
+  state.openCommentsFor=n.meal_plan_id;
+  go('feed');
 }
 function updateNotifBadge(){
   const btns=document.querySelectorAll('.topbar .icon-btn');
@@ -908,7 +951,12 @@ async function refreshUnreadCounts(){
 async function renderConversations(host){
   const page=el('div',{className:'page'}); host.append(page);
   page.append(el('div',{className:'section-title'},'💬 Pesan'));
-  const {data:msgs}=await sb.from('messages').select('*').or(`sender_id.eq.${state.user.id},receiver_id.eq.${state.user.id}`).order('created_at',{ascending:false});
+  const me=state.user.id;
+  // Ambil SEMUA pesan yang terkirim/diterima user ini
+  const {data:msgs,error}=await sb.from('messages').select('*')
+    .or(`sender_id.eq.${me},receiver_id.eq.${me}`)
+    .order('created_at',{ascending:false});
+  if(error){ page.append(el('div',{className:'empty'},'Gagal memuat: '+error.message)); return; }
   // group by other user, keep latest
   const convos={};
   (msgs||[]).forEach(m=>{
@@ -1067,6 +1115,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28a57e65a24ce26',t:'MTc4NjMxNjA3Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
-</body>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28aaf816ccc0d78',t:'MTc4NjMxOTY2Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
