@@ -17,7 +17,12 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   /* overflow-x:clip mencegah geser horizontal TANPA mematikan position:sticky
-     (jangan pakai overflow-x:hidden, itu merusak header sticky). */
+     (jangan pakai overflow-x:hidden, itu merusak header sticky).
+     background di html mewarnai area overscroll/tarik-ke-bawah agar senada. */
+  html{
+    background-color:#ffe3d3;
+    overscroll-behavior-y:none;
+  }
   html,body{margin:0;padding:0;overflow-x:clip;max-width:100%}
   /* Warna body tampil di balik status bar (notch) agar terasa nyatu */
   body{
@@ -1012,5 +1017,5 @@ loadSession();
 // polling ringan untuk hitung unread setiap 30 detik (fallback realtime)
 setInterval(()=>{ if(state.user) refreshUnreadCounts(); },30000);
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28a107e29ede10a',t:'MTc4NjMxMzE0OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28a1bef4e2f2c14',t:'MTc4NjMxMzYxNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
