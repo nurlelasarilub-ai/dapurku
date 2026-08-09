@@ -2,10 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="theme-color" content="#ffe3d3" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <title>DapurKu — Rencana Masakan Sosial</title>
 
 <!-- Supabase JS SDK (CDN) -->
@@ -22,9 +20,7 @@
   /* Warna body tampil di balik status bar (notch) agar terasa nyatu */
   body{
     font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    background-color:#ffe3d3;
-    background-image:linear-gradient(180deg,#ffe3d3 0%,#fff3ea 220px,#fdf0e8 100%);
-    background-attachment:fixed;
+    background:linear-gradient(180deg,#ffe3d3 0%,#fff3ea 220px,#fdf0e8 100%);
     color:var(--ink); min-height:100vh; font-size:13.5px; line-height:1.4;
   }
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
@@ -63,12 +59,10 @@
 
   /* ---------- Top bar ---------- */
   .topbar{
-    position:sticky;top:0;z-index:20;
-    padding:calc(env(safe-area-inset-top, 0px) + 10px) 12px 8px;
+    position:sticky;top:0;z-index:20;padding:10px 12px 8px;
     display:flex;align-items:center;gap:8px;
-    background:linear-gradient(180deg,rgba(255,227,211,.98),rgba(255,243,234,.92));
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px)}
+    background:linear-gradient(180deg,rgba(255,227,211,.95),rgba(255,243,234,.85));
+    backdrop-filter:blur(8px)}
   .topbar .title{font-size:18px;font-weight:900;color:var(--coral-dark);flex:1}
   .icon-btn{
     width:36px;height:36px;border-radius:50%;background:var(--white);display:flex;
@@ -166,7 +160,7 @@
     word-break:break-word;overflow-wrap:anywhere;white-space:pre-wrap;max-width:100%;overflow-x:hidden}
   .recipe-card b{color:var(--coral-dark)}
   .chat-input{position:fixed;bottom:0;max-width:480px;width:100%;left:50%;transform:translateX(-50%);
-    display:flex;gap:7px;padding:8px 11px calc(env(safe-area-inset-bottom,0px) + 8px);background:rgba(255,255,255,.97);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--peach-soft)}
+    display:flex;gap:7px;padding:8px 11px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-top:1px solid var(--peach-soft)}
   .chat-input input{flex:1;padding:10px 14px;border-radius:999px;border:2px solid var(--peach-soft);background:var(--cream);outline:none;min-width:0}
   .chat-input button{width:42px;height:42px;border-radius:50%;background:var(--coral);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .share-recipe-btn{font-size:11px;padding:5px 9px;border-radius:999px;background:var(--peach-soft);color:var(--coral-dark);font-weight:800;flex-shrink:0}
@@ -189,8 +183,8 @@
 
   /* ---------- Bottom nav ---------- */
   .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:480px;width:100%;
-    background:rgba(255,255,255,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;justify-content:space-around;
-    padding:4px 4px calc(env(safe-area-inset-bottom,0px) + 2px);border-top:1px solid var(--peach-soft);z-index:30;box-shadow:0 -4px 20px rgba(239,125,87,.08)}
+    background:rgba(255,255,255,.96);backdrop-filter:blur(10px);display:flex;justify-content:space-around;
+    padding:4px 4px 6px;border-top:1px solid var(--peach-soft);z-index:30;box-shadow:0 -4px 20px rgba(239,125,87,.08)}
   .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;color:var(--muted);font-size:9.5px;font-weight:800;padding:2px 2px 3px}
   .nav-item .ni{font-size:19px;line-height:1.1}
   .nav-item.active{color:var(--coral-dark)}
@@ -1016,5 +1010,5 @@ loadSession();
 // polling ringan untuk hitung unread setiap 30 detik (fallback realtime)
 setInterval(()=>{ if(state.user) refreshUnreadCounts(); },30000);
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a289e0ff583b7dca',t:'MTc4NjMxMTIwMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a289f2bc38dccdf5',t:'MTc4NjMxMTkzMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
