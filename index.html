@@ -114,15 +114,17 @@
 
   /* ---------- Feed card ---------- */
   .card{background:var(--white);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow);margin-bottom:11px;overflow:hidden}
-  .post-head{display:flex;align-items:center;gap:9px;margin-bottom:9px;min-width:0}
+  .post-head{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;min-width:0}
   .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--coral),#ffc1a3);
     color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;
     object-fit:cover}
-  .post-head .meta{flex:1;min-width:0}
-  .post-head .name{font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:5px;min-width:0}
+  .post-head .meta{flex:1;min-width:0;padding-top:1px}
+  .post-head .name{font-weight:800;font-size:13.5px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .post-head .username-line{font-size:11px;color:var(--muted);font-weight:700;margin-top:1px}
   .post-head .when{font-size:11px;color:var(--muted)}
-  .day-ribbon{display:inline-flex;align-items:center;gap:4px;background:var(--peach-soft);color:var(--coral-dark);
-    font-weight:800;font-size:10px;padding:2px 8px;border-radius:999px;text-transform:capitalize;max-width:100%;white-space:nowrap}
+  .day-ribbon{background:var(--peach-soft);color:var(--coral-dark);
+    font-weight:800;font-size:9.5px;padding:3px 8px;border-radius:999px;white-space:nowrap;
+    flex-shrink:0;margin-left:6px;margin-top:2px;text-align:right;line-height:1.2}
   .meal-tag{font-size:10px;font-weight:800;color:#fff;background:var(--coral);padding:2px 7px;border-radius:999px;text-transform:capitalize}
   .post-title{font-size:15.5px;font-weight:900;margin:2px 0 4px;word-break:break-word;line-height:1.3}
   .post-desc{color:#6b5454;font-size:13px;margin:0 0 8px;word-break:break-word}
@@ -493,11 +495,10 @@ async function postCard(mp){
   const head=el('div',{className:'post-head'},
     avatarFor(p),
     el('div',{className:'meta'},
-      el('div',{className:'name'}, p.full_name||p.username, el('span',{className:'chip'},'@'+p.username)),
-      el('div',{className:'when'},
-        el('span',{className:'day-ribbon'},'📅 '+DAY_IDN[mp.day]+' • '+MEAL_IDN[mp.meal_time]),
-      )
-    )
+      el('div',{className:'name'}, p.full_name||p.username),
+      el('div',{className:'username-line'}, '@'+p.username)
+    ),
+    el('span',{className:'day-ribbon'},'📅 '+DAY_IDN[mp.day]+' • '+MEAL_IDN[mp.meal_time])
   );
   card.append(head);
   card.append(el('div',{className:'post-title'}, mp.title));
@@ -1055,5 +1056,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28a2ad7ec2cf8fc',t:'MTc4NjMxNDIyOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28a3c4abd554880',t:'MTc4NjMxNDk0Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
