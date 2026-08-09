@@ -190,9 +190,9 @@
   /* ---------- Bottom nav ---------- */
   .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:480px;width:100%;
     background:rgba(255,255,255,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;justify-content:space-around;
-    padding:6px 4px calc(env(safe-area-inset-bottom,0px) + 8px);border-top:1px solid var(--peach-soft);z-index:30;box-shadow:0 -4px 20px rgba(239,125,87,.08)}
-  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;color:var(--muted);font-size:9.5px;font-weight:800;padding:3px}
-  .nav-item .ni{font-size:19px}
+    padding:4px 4px calc(env(safe-area-inset-bottom,0px) + 2px);border-top:1px solid var(--peach-soft);z-index:30;box-shadow:0 -4px 20px rgba(239,125,87,.08)}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;color:var(--muted);font-size:9.5px;font-weight:800;padding:2px 2px 3px}
+  .nav-item .ni{font-size:19px;line-height:1.1}
   .nav-item.active{color:var(--coral-dark)}
 
   .empty{text-align:center;padding:32px 16px;color:var(--muted)}
@@ -1016,5 +1016,5 @@ loadSession();
 // polling ringan untuk hitung unread setiap 30 detik (fallback realtime)
 setInterval(()=>{ if(state.user) refreshUnreadCounts(); },30000);
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a289d5804df75fba',t:'MTc4NjMxMDczMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a289e0ff583b7dca',t:'MTc4NjMxMTIwMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
