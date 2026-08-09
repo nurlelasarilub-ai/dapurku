@@ -847,18 +847,29 @@ async function renderNotifications(host){
   ));
   const list=el('div',{id:'notifList'}); page.append(list);
   list.append(el('div',{className:'empty'},'Memuat...'));
-  const {data}=await sb.from('notifications').select('*, actor:profiles(*)')
+  const {data}=await sb.from('notifications').select('*, actor:profiles!notifications_actor_id_fkey(id,username,full_name,avatar_url)')
     .eq('user_id',state.user.id).order('created_at',{ascending:false}).limit(50);
   list.innerHTML='';
   if(!data||data.length===0){ list.append(el('div',{className:'empty'},el('div',{className:'eicon'},'🔕'),'Belum ada notifikasi. Mulai dengan menyukai atau berkomentar!')); return; }
   for(const n of data){
     const a=n.actor;
+    const name = a?.full_name || a?.username || 'Seseorang';
+    // Teks yang natural: siapa + aksi
+    let detail;
+    if(n.type==='like') detail = NOTIF_ICON.like+' '+name+' menyukai rencana masakanmu ❤️';
+    else if(n.type==='comment') detail = NOTIF_ICON.comment+' '+name+' '+(n.content||'berkomentar');
+    else if(n.type==='message') detail = NOTIF_ICON.message+' '+name+' mengirim pesan: '+(n.content||'');
+    else detail = NOTIF_ICON[n.type]+' '+name+' '+(n.content||NOTIF_LABEL[n.type]);
     const item=el('button',{className:'convo-item',style:'text-align:left;width:100%;opacity:'+(n.is_read?'.65':'1'),
       onClick:()=>openNotif(n)},
-      avatarFor(a),
+      avatarFor(a||{username:'?'}),
       el('div',{className:'info'},
-        el('div',{className:'nm'}, (a?.full_name||a?.username||'Seseorang')),
-        el('div',{className:'pv'}, NOTIF_ICON[n.type]+' '+(n.content||NOTIF_LABEL[n.type]))
+        el('div',{className:'nm'}, NOTIF_ICON[n.type]+' '+(
+          n.type==='like'?'Suka':
+          n.type==='comment'?'Komentar baru':
+          n.type==='message'?'Pesan baru':'Notifikasi'
+        )),
+        el('div',{className:'pv'}, detail)
       ),
       el('div',{className:'tm'},timeAgo(n.created_at)),
       n.is_read?null:el('span',{className:'unread-dot'})
@@ -1056,6 +1067,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28a45408979fe17',t:'MTc4NjMxNTMxMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28a57e65a24ce26',t:'MTc4NjMxNjA3Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+</body>
 </html>
