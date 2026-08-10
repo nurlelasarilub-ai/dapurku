@@ -85,11 +85,6 @@
 
   /* Sembunyikan topbar global saat di chat, agar chat-head jadi header tunggal (tidak saling menimpa) */
   .topbar.hide{display:none}
-  .chat-head{padding-top:10px}
-  /* Di PWA standalone, beri ruang status bar pada chat-head */
-  @media (display-mode: standalone), (display-mode: fullscreen){
-    .chat-head{padding-top:calc(env(safe-area-inset-top,0px) + 9px)}
-  }
   /* ===== PWA standalone: samakan warna sampai ke status bar =====
      Hanya aktif saat di-install, tampilan browser biasa TIDAK berubah. */
   @media (display-mode: standalone), (display-mode: fullscreen) {
@@ -184,6 +179,20 @@
     border:2px dashed var(--coral);border-radius:11px;color:var(--coral-dark);font-weight:800;background:rgba(255,154,118,.06);font-size:13px}
 
   /* ---------- DM ---------- */
+  /* Chat: full-bleed, nempel ke atas & penuh kiri-kanan (mirip WA) */
+  .chat-view{padding:0 !important;display:flex;flex-direction:column;min-height:100vh;animation:none}
+  /* area di atas chat-head (saat topbar disembunyikan) ikut warna chat-head */
+  body.topbar-hidden{background:#fff0e6}
+  body.topbar-hidden #app{background:#fff0e6}
+  .chat-head{
+    position:sticky;top:0;z-index:30;background:#fff0e6;flex-shrink:0;
+    display:flex;align-items:center;gap:9px;
+    /* nempel ke status bar di PWA (env=0 di browser biasa) */
+    padding:calc(env(safe-area-inset-top,0px) + 9px) 12px 9px;
+    margin:0;border-bottom:1px solid var(--peach-soft);
+    /* pastikan lebar penuh tanpa terpotong padding induk */
+    width:100%;box-sizing:border-box;
+  }
   .convo-item{display:flex;align-items:center;gap:10px;padding:10px;background:#fff;border-radius:13px;margin-bottom:8px;box-shadow:var(--shadow);position:relative;width:100%;text-align:left;min-width:0}
   .convo-item .avatar{width:42px;height:42px;font-size:15px}
   .convo-item .info{flex:1;min-width:0}
@@ -202,12 +211,10 @@
   .notif-reply:active{background:var(--peach)}
   .notif-item.read{opacity:.7}
 
-  .chat-head{position:sticky;top:0;z-index:30;background:#fff0e6;
-    display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--peach-soft)}
   .chat-head .avatar{width:36px;height:36px;font-size:13px}
   .chat-head .nm{font-weight:800;font-size:14px}
-  .back-btn{font-size:20px;padding:3px 7px}
-  .chat-messages{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:55vh}
+  .back-btn{font-size:22px;padding:2px 6px;line-height:1}
+  .chat-messages{padding:12px 12px 90px;display:flex;flex-direction:column;gap:8px;flex:1}
   .bubble-msg{max-width:78%;padding:9px 12px;border-radius:15px;font-size:13.5px;word-break:break-word;overflow-wrap:anywhere}
   .bubble-msg .ct{font-size:10px;opacity:.7;margin-top:3px;text-align:right}
   .bubble-msg.them{background:#fff;align-self:flex-start;border-bottom-left-radius:4px;box-shadow:var(--shadow)}
@@ -1004,7 +1011,7 @@ async function renderConversations(host){
 
 async function renderChat(host){
   const other=await getProfile(state.chatWith); if(!other){state.chatWith=null;go('messages');return;}
-  const page=el('div',{className:'page',style:'padding-bottom:80px'}); host.append(page);
+  const page=el('div',{className:'page chat-view'}); host.append(page);
   const head=el('div',{className:'chat-head'},
     el('button',{className:'back-btn',onClick:()=>{state.chatWith=null;go('messages')}},'‹'),
     avatarFor(other),
@@ -1013,6 +1020,7 @@ async function renderChat(host){
     el('button',{className:'share-recipe-btn',onClick:()=>pickRecipeToShare(other)},'📖 Resep')
   );
   page.append(head);
+  // area pesan: tetap ada padding kiri-kanan agar tidak mepet
   const box=el('div',{className:'chat-messages',id:'chatBox'}); page.append(box);
   const input=el('div',{className:'chat-input'},
     el('input',{id:'chatInput',placeholder:'Tulis pesan...'}),
@@ -1135,5 +1143,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28af46b9cad1b28',t:'MTc4NjMyMjQ4NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28b071c4bcd290d',t:'MTc4NjMyMzI1MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
