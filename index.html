@@ -83,6 +83,15 @@
     background:linear-gradient(180deg,#ffe3d3 0%,#fff0e6 100%);
     border-bottom:1px solid rgba(255,154,118,.12)}
 
+  /* Sembunyikan topbar global saat di chat, agar chat-head jadi header tunggal (tidak saling menimpa) */
+  .topbar.hide{display:none}
+  /* Saat topbar global disembunyikan, chat-head jadi header solid */
+  body.topbar-hidden .chat-head{background:#fff0e6}
+  .chat-head{padding-top:10px}
+  /* Di PWA standalone, beri ruang status bar pada chat-head */
+  @media (display-mode: standalone), (display-mode: fullscreen){
+    .chat-head{padding-top:calc(env(safe-area-inset-top,0px) + 9px)}
+  }
   /* ===== PWA standalone: samakan warna sampai ke status bar =====
      Hanya aktif saat di-install, tampilan browser biasa TIDAK berubah. */
   @media (display-mode: standalone), (display-mode: fullscreen) {
@@ -419,7 +428,7 @@ async function loadSession(){
 function renderShell(){
   const app=$('#app'); app.innerHTML='';
   app.append(
-    el('div',{className:'topbar'},
+    el('div',{className:'topbar',id:'topBar'},
       el('button',{className:'title',style:'background:none;border:none;cursor:pointer;text-align:left;padding:0',title:'Ke Beranda',onClick:()=>go('feed')},'🍳 DapurKu'),
       el('button',{className:'icon-btn',title:'Notifikasi',onClick:()=>go('notifications')},
         '🔔', state.unreadNotif>0?el('span',{className:'badge-dot'}):null),
@@ -456,9 +465,12 @@ function go(view,opts={}){
   else if(view==='profile') renderProfile(host);
   else if(view==='userProfile') renderUserProfile(host,opts.userId);
 
-  // Sembunyikan navbar bawah saat sedang di chat DM (biar kotak input lega)
-  const nav=document.getElementById('bottomNav');
-  if(nav) nav.classList.toggle('hide', view==='messages' && state.chatWith);
+  // Di layar chat DM: sembunyikan topbar global & navbar bawah,
+  // agar chat-head (sticky) jadi header tunggal — tidak saling menimpa.
+  const inChat = view==='messages' && state.chatWith;
+  document.getElementById('topBar')?.classList.toggle('hide', inChat);
+  document.getElementById('bottomNav')?.classList.toggle('hide', inChat);
+  document.body.classList.toggle('topbar-hidden', inChat);
 
   window.scrollTo(0,0);
 }
@@ -1125,6 +1137,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28ad56b98e38348',t:'MTc4NjMyMTIxNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28ae7112e035fe1',t:'MTc4NjMyMTkzOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
