@@ -184,14 +184,17 @@
   /* area di atas chat-head (saat topbar disembunyikan) ikut warna chat-head */
   body.topbar-hidden{background:#fff0e6}
   body.topbar-hidden #app{background:#fff0e6}
+  /* Header chat: efek frosted glass transparan saat konten lewat di belakang */
   .chat-head{
-    position:sticky;top:0;z-index:30;background:#fff0e6;flex-shrink:0;
-    display:flex;align-items:center;gap:9px;
-    /* nempel ke status bar di PWA (env=0 di browser biasa) */
+    position:sticky;top:0;z-index:30;
+    background:rgba(255,240,230,.72);
+    -webkit-backdrop-filter:saturate(180%) blur(14px);
+    backdrop-filter:saturate(180%) blur(14px);
+    display:flex;align-items:center;gap:9px;flex-shrink:0;
     padding:calc(env(safe-area-inset-top,0px) + 9px) 12px 9px;
-    margin:0;border-bottom:1px solid var(--peach-soft);
-    /* pastikan lebar penuh tanpa terpotong padding induk */
+    margin:0;border-bottom:1px solid rgba(255,154,118,.18);
     width:100%;box-sizing:border-box;
+    transform:translateZ(0); /* paksa layer GPU agar scroll mulus */
   }
   .convo-item{display:flex;align-items:center;gap:10px;padding:10px;background:#fff;border-radius:13px;margin-bottom:8px;box-shadow:var(--shadow);position:relative;width:100%;text-align:left;min-width:0}
   .convo-item .avatar{width:42px;height:42px;font-size:15px}
@@ -1143,5 +1146,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28b071c4bcd290d',t:'MTc4NjMyMzI1MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28b1f5bceab64ca',t:'MTc4NjMyNDI0Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
