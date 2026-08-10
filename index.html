@@ -8,6 +8,8 @@
 
 <!-- PWA: manifest + ikon -->
 <link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -232,7 +234,10 @@
   /* ---------- Bottom nav ---------- */
   .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:480px;width:100%;
     background:rgba(255,255,255,.96);backdrop-filter:blur(10px);display:flex;justify-content:space-around;
-    padding:4px 4px 6px;border-top:1px solid var(--peach-soft);z-index:30;box-shadow:0 -4px 20px rgba(239,125,87,.08)}
+    padding:4px 4px 6px;border-top:1px solid var(--peach-soft);z-index:30;box-shadow:0 -4px 20px rgba(239,125,87,.08);
+    transition:transform .25s ease}
+  /* Sembunyikan navbar bawah saat di layar chat DM agar kotak input tidak ketutup */
+  .bottom-nav.hide{transform:translate(-50%,120%)}
   .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;color:var(--muted);font-size:9.5px;font-weight:800;padding:2px 2px 3px}
   .nav-item .ni{font-size:19px;line-height:1.1}
   .nav-item.active{color:var(--coral-dark)}
@@ -415,14 +420,14 @@ function renderShell(){
   const app=$('#app'); app.innerHTML='';
   app.append(
     el('div',{className:'topbar'},
-      el('div',{className:'title'},'🍳 DapurKu'),
+      el('button',{className:'title',style:'background:none;border:none;cursor:pointer;text-align:left;padding:0',title:'Ke Beranda',onClick:()=>go('feed')},'🍳 DapurKu'),
       el('button',{className:'icon-btn',title:'Notifikasi',onClick:()=>go('notifications')},
         '🔔', state.unreadNotif>0?el('span',{className:'badge-dot'}):null),
       el('button',{className:'icon-btn',title:'Pesan',onClick:()=>go('messages')},
         '✉️', state.unreadCount>0?el('span',{className:'badge-dot'}):null)
     ),
     el('div',{id:'pageHost'}),
-    el('div',{className:'bottom-nav'},
+    el('div',{className:'bottom-nav',id:'bottomNav'},
       navItem('feed','🏠','Beranda'),
       navItem('explore','🌿','Jelajah'),
       navItem('planner','📅','Rencana'),
@@ -450,6 +455,11 @@ function go(view,opts={}){
   else if(view==='notifications') renderNotifications(host);
   else if(view==='profile') renderProfile(host);
   else if(view==='userProfile') renderUserProfile(host,opts.userId);
+
+  // Sembunyikan navbar bawah saat sedang di chat DM (biar kotak input lega)
+  const nav=document.getElementById('bottomNav');
+  if(nav) nav.classList.toggle('hide', view==='messages' && state.chatWith);
+
   window.scrollTo(0,0);
 }
 
@@ -1115,6 +1125,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28aaf816ccc0d78',t:'MTc4NjMxOTY2Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28ad56b98e38348',t:'MTc4NjMyMTIxNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+</body>
 </html>
